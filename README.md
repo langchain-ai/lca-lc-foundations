@@ -33,17 +33,18 @@ cp example.env .env
 
 Edit the .env file to include the keys below. [More info](#model-providers)
 ```bash
-# Required for model usage
+# Required
 OPENAI_API_KEY='your_openai_api_key_here'
 TAVILY_API_KEY='your_tavily_api_key_here'
 
-# optional, only used in Lesson 1 once
+# optional, only used in Module1, Lesson 1 once
 ANTHROPIC_API_KEY='your_anthropic_api_key_here'
 GOOGLE_API_KEY='your_google_api_key_here'
 
 # Optional for evaluation and tracing
 LANGSMITH_API_KEY='your_langsmith_api_key_here'
-LANGSMITH_TRACING=true
+# uncomment to set tracing to true when you set up your LangSmith account
+#LANGSMITH_TRACING=true
 LANGSMITH_PROJECT=lca-lc-foundation
 # Uncomment the following if you are on the EU instance:
 #LANGSMITH_ENDPOINT=https://eu.api.smith.langchain.com
@@ -73,7 +74,7 @@ pip install -r requirements.txt
 
 ### Quick Start Verification
 
-After completing the Setup section, you can run this command to verify your environment:
+After completing the Setup section, we recommend you run this command to verify your environment:
 
 <details open>
 <summary>Using uv</summary>
@@ -91,6 +92,62 @@ uv run python env_utils.py
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 python env_utils.py
 ```
+
+</details>
+
+**What the verification checks:**
+- ✅ Python executable location and version (must be >=3.12, <3.14)
+- ✅ Virtual environment is properly activated
+- ✅ Required packages are installed with correct versions
+- ✅ Packages are in the correct Python version's site-packages
+- ✅ Environment variables (API keys) are properly configured
+
+**Configuration Issues and Solutions:**
+
+<details>
+<summary>ImportError when running env_utils.py</summary>
+
+If you see an error like `ModuleNotFoundError: No module named 'dotenv'`, you're likely running Python outside the virtual environment.
+
+**Solution:**
+- Use `uv run python env_utils.py` (recommended), or
+- Activate the virtual environment first:
+  - macOS/Linux: `source .venv/bin/activate`
+  - Windows: `.venv\Scripts\activate`
+
+</details>
+
+<details>
+<summary>Environment Variable Conflicts</summary>
+
+If you see a warning about "ENVIRONMENT VARIABLE CONFLICTS DETECTED", you have API keys set in your system environment that differ from your .env file. Since `load_dotenv()` doesn't override existing variables by default, your system values will be used.
+
+**Solutions:**
+1. Unset the conflicting system environment variables (commands provided in warning)
+2. Use `load_dotenv(override=True)` in your notebooks to force .env values to take precedence
+3. Update your .env file to match your system environment
+
+</details>
+
+<details>
+<summary>LangSmith Tracing Errors</summary>
+
+If you see "LANGSMITH_TRACING is enabled but LANGSMITH_API_KEY still has the example/placeholder value", you need to either:
+1. Set a valid LangSmith API key in your .env file, or
+2. Comment out or set `LANGSMITH_TRACING=false` in your .env file
+
+Note: LangSmith is optional for evaluation and tracing. The course works without it.
+
+</details>
+
+<details>
+<summary>Wrong Python Version</summary>
+
+If you see a warning about Python version not satisfying requirements, you need Python >=3.12 and <3.14.
+
+**Solution:**
+- If using `uv`: Run `uv sync` which will automatically install the correct Python version
+- If using pip: Install Python 3.12 or 3.13 using [pyenv](#python-virtual-environments) or from [python.org](https://www.python.org/downloads/)
 
 </details>
 
@@ -147,7 +204,7 @@ This repository contains three Modules that serve as introductions to many of La
 
 ## 📖 Related Resources
 
-### Python Virtual Environments 
+### Python Virtual Environments
 
 Managing your Python version is often best done with virtual environments. This allows you to select a Python version for the course independent of the system Python version.
 
@@ -190,14 +247,19 @@ Tavily is a search provider that returns search results in an LLM-friendly way. 
 
 <img width="600" alt="LangSmith API Keys" src="https://github.com/user-attachments/assets/2e916b2d-e3b0-4c59-a178-c5818604b8fe" />
 
-- Update your .env file you created with your new LangSmith API Key.
+- Update the .env file you created with your new LangSmith API Key.
+- Check that LANGSMITH_TRACING is uncommented and set to true.
 
 For more information on LangSmith, see our docs [here](https://docs.langchain.com/langsmith/home).
+
+**Note:** If you enable LangSmith tracing by setting `LANGSMITH_TRACING=true` in your .env file, make sure you have a valid `LANGSMITH_API_KEY` set. The environment verification script (`env_utils.py`) will warn you if tracing is enabled without a valid key.
 
 ### Environment Variables
 
 This course uses the [dotenv](https://pypi.org/project/python-dotenv) module to read key-value pairs from the .env file and set them in the environment in the Jupyter notebook. They do not need to be set globally in your system environment.
 
+**Note:** If you have API keys already set in your system environment, they may conflict with the ones in your .env file. The `env_utils.py` verification script will detect and warn you about such conflicts. By default, `load_dotenv()` does not override existing environment variables.
+
 ### Development Environment
 
-The course uses [Jupyter](https://jupyter.org/) notebooks. Jupyter is installed and can be run as described above. Jupyter notebooks can also be edited and run in VSCode or other VSCode variants such as Windsurf or Cursor.  
+The course uses [Jupyter](https://jupyter.org/) notebooks. Jupyter is installed and can be run as described above. Jupyter notebooks can also be edited and run in VSCode or other VSCode variants such as Windsurf or Cursor.
