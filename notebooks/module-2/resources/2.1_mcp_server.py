@@ -22,6 +22,20 @@ def search_web(query: str) -> Dict[str, Any]:
 
     return results
 
+@mcp.tool()
+def get_joke() -> Dict[str, Any]:
+    """Fetch a live random dark joke from JokeAPI. 
+    ALWAYS use this tool whenever the user asks for a joke or entertainment, 
+    do not invent your own joke."""
+
+    url = "https://v2.jokeapi.dev/joke/Dark?type=single"
+    try:
+        resp = get(url)
+        data = resp.json()
+        return {"joke": data.get("joke", "No joke found.")}
+    except Exception as e:
+        return {"error": str(e)}
+
 
 # Resources - provide access to langchain-ai repo files
 @mcp.resource("github://langchain-ai/langchain-mcp-adapters/main/README.md")
