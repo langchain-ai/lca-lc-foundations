@@ -30,6 +30,7 @@ dependencies = [
     "jupyterlab>=4.5.9",
     "mcp>=1.21.1,<2",
     "mcp_server_time<=2026.7.10",
+    "langchain-voyageai>=0.4.1",
 ]
 
 [build-system]
