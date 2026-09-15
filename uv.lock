@@ -1869,7 +1869,6 @@ dependencies = [
     { name = "python-dotenv" },
     { name = "scipy" },
     { name = "sounddevice" },
-    { name = "tavily" },
     { name = "tavily-python" },
 ]
 
@@ -1899,7 +1898,6 @@ requires-dist = [
     { name = "python-dotenv", specifier = ">=1.2.0" },
     { name = "scipy", specifier = ">=1.16.3" },
     { name = "sounddevice", specifier = ">=0.5.3" },
-    { name = "tavily", specifier = ">=1.1.0" },
     { name = "tavily-python", specifier = ">=0.7.13" },
 ]
 
@@ -3214,16 +3212,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/ef/52/9ba0f43b686e7f3dd
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a8/45/a132b9074aa18e799b891b91ad72133c98d8042c70f6240e4c5f9dabee2f/structlog-25.5.0-py3-none-any.whl", hash = "sha256:a8453e9b9e636ec59bd9e79bbd4a72f025981b3ba0f5837aebf48f02f37a7f9f", size = 72510, upload-time = "2025-10-27T08:28:21.535Z" },
 ]
-
-[[package]]
-name = "tavily"
-version = "1.1.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "aiohttp" },
-    { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/63/ba/cd74acdb0537a02fb5657afbd5fd5a27a298c85fc27f544912cc001377bb/tavily-1.1.0.tar.gz", hash = "sha256:7730bf10c925dc0d0d84f27a8979de842ecf88c2882183409addd855e27d8fab", size = 5081, upload-time = "2025-10-31T09:32:40.555Z" }
 
 [[package]]
 name = "tavily-python"
