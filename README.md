@@ -54,7 +54,8 @@ GOOGLE_API_KEY='your_google_api_key_here'
 LANGSMITH_API_KEY='your_langsmith_api_key_here'
 # uncomment to set tracing to true when you set up your LangSmith account
 #LANGSMITH_TRACING=true
-LANGSMITH_PROJECT=lca-lc-foundation
+LANGSMITH_AGENT_ID=lca-lc-foundations
+LANGSMITH_AGENT_ENVIRONMENT=local
 # Uncomment the following if you are on the EU instance:
 #LANGSMITH_ENDPOINT=https://eu.api.smith.langchain.com
 ```
@@ -272,6 +273,22 @@ If you don't have an OpenAI API key, you can sign up [here](https://openai.com/i
 
 This course has been created using particular models and model providers.  You can use other providers, but you will need to update the API keys in the .env file and make some necessary code changes. LangChain supports many chat model providers. [More Info](https://docs.langchain.com/oss/python/integrations/providers/all_providers).
 
+For OpenAI models that require the Responses API, such as `gpt-5.6-luna`, initialize the model explicitly and pass it to `create_agent`:
+
+```python
+from langchain.chat_models import init_chat_model
+from langchain.agents import create_agent
+
+model = init_chat_model(
+    "gpt-5.6-luna",
+    model_provider="openai",
+    use_responses_api=True,
+)
+agent = create_agent(model=model)
+```
+
+The introductory OpenAI model examples also select the Responses API explicitly. The course keeps `gpt-5-nano` as its default; model availability depends on your OpenAI account. The `gpt-audio` example uses Chat Completions instead.
+
 Tavily is a search provider that returns search results in an LLM-friendly way. They have a generous free tier. [Tavily](https://tavily.com)
 
 ### Getting Started with LangSmith
@@ -283,8 +300,12 @@ Tavily is a search provider that returns search results in an LLM-friendly way. 
 
 <img width="600" alt="LangSmith API Keys" src="https://github.com/user-attachments/assets/2e916b2d-e3b0-4c59-a178-c5818604b8fe" />
 
-- Update the .env file you created with your new LangSmith API Key.
-- Check that LANGSMITH_TRACING is uncommented and set to true.
+- Create an agent in your LangSmith workspace and copy its agent ID into `LANGSMITH_AGENT_ID` in `.env`; `lca-lc-foundations` in the templates is an example ID, not a workspace or project name
+- Set `LANGSMITH_AGENT_ENVIRONMENT=local` for notebook runs; the supported environments are `local`, `development`, `staging`, and `production`
+- Update `.env` with your LangSmith API key and uncomment `LANGSMITH_TRACING=true` only after configuring the agent and environment
+- Remove legacy `LANGSMITH_PROJECT` and `LANGCHAIN_PROJECT` settings from `.env` and your shell; setting a project alongside an agent address prevents implicitly routed traces from being recorded
+
+The agent ID is a lowercase slug, not a UUID. Use the ID shown in LangSmith rather than the agent's display name. Set `LANGSMITH_ENDPOINT` to your account's region if needed, using the EU example above for EU accounts. After changing `.env`, restart the notebook kernel so the new settings take effect.
 
 For more information on LangSmith, see our docs [here](https://docs.langchain.com/langsmith/home).
 
