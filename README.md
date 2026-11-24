@@ -33,33 +33,43 @@ Make a copy of example.env
 cp example.env .env
 ```
 
-Edit the .env file to include the keys below for [Models](#model-providers) and optionally [LangSmith](#getting-started-with-langsmith)
-
-- Get an OpenAI API Key [here](https://openai.com/index/openai-api/).  
-- Optional for Module1/Lesson1, get an Anthropic API Key [here](https://console.anthropic.com) and a Google API Key [here](https://ai.google.dev/gemini-api/docs/quickstart).
-- Optional, Create a [LangSmith](https://smith.langchain.com/) account and API Key.  
+Choose one chat setup in `.env` or your shell. Direct provider access is the default:
 
 ```bash
-# Manual installs for checking: uv
-
-# Required
-OPENAI_API_KEY='your_openai_api_key_here'
-TAVILY_API_KEY='your_tavily_api_key_here'
-
-# optional, only used in Module1, Lesson 1 once
-ANTHROPIC_API_KEY='your_anthropic_api_key_here'
-GOOGLE_API_KEY='your_google_api_key_here'
-
-# Optional for evaluation and tracing
-LANGSMITH_API_KEY='your_langsmith_api_key_here'
-# uncomment to set tracing to true when you set up your LangSmith account
-#LANGSMITH_TRACING=true
-LANGSMITH_AGENT_ID=lca-lc-foundations
-LANGSMITH_AGENT_ENVIRONMENT=local
-# Uncomment the following if you are on the EU instance:
-#LANGSMITH_ENDPOINT=https://eu.api.smith.langchain.com
+OPENAI_API_KEY=your_openai_api_key_here
+TAVILY_API_KEY=your_tavily_api_key_here
 ```
 
+For [LangSmith LLM Gateway](https://docs.langchain.com/langsmith/llm-gateway-direct-model-access), your workspace administrator must configure the provider secrets and grant access to the models used in the lessons. You do not need local OpenAI, Anthropic, or Google keys for supported chat models:
+
+```bash
+LANGSMITH_GATEWAY=true
+LANGSMITH_API_KEY=your_langsmith_api_key_here
+TAVILY_API_KEY=your_tavily_api_key_here
+```
+
+If you use different credentials for gateway requests and tracing, set `LANGSMITH_GATEWAY_API_KEY` for chat. It takes precedence over `LANGSMITH_API_KEY` for gateway requests; tracing still uses `LANGSMITH_API_KEY`. Gateway access does not require tracing to be enabled. Keep the [agent tracing settings](#getting-started-with-langsmith) separate.
+
+For another region, set `LANGSMITH_GATEWAY` to your gateway base URL, such as `https://eu.gateway.smith.langchain.com`, `https://apac.gateway.smith.langchain.com`, or `https://aws.gateway.smith.langchain.com`. Do not append a provider path: the integrations add `/openai/v1`, `/anthropic`, or `/gemini`. `LANGSMITH_ENDPOINT` configures tracing, not gateway routing. Remove explicit provider base URL overrides if you want automatic gateway routing.
+
+Unset `LANGSMITH_GATEWAY`, or set it to `false`, `0`, `no`, or an empty value, to use direct provider access. Export shell variables when using a shell instead of `.env`. The notebooks use `load_dotenv()` without overriding exported variables; restart the notebook kernel after changing settings.
+
+The optional Anthropic and Gemini examples in Module 1 need their corresponding provider key in direct mode, or provider access configured in the gateway workspace in gateway mode. The Gemini example uses the Gemini Developer API, not Vertex AI. Web search still requires `TAVILY_API_KEY` in both modes.
+
+**Bonus RAG only:** `notebooks/module-2/bonus_rag.ipynb` uses `OpenAIEmbeddings`, which does not use `LANGSMITH_GATEWAY`. That lesson still needs a direct `OPENAI_API_KEY`; gateway-only chat setup is sufficient for the other chat examples.
+
+After installing the dependencies below, check chat routing without local provider keys by leaving `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, and `GEMINI_API_KEY` unset and running:
+
+```python
+from dotenv import load_dotenv
+from langchain.chat_models import init_chat_model
+
+load_dotenv()
+model = init_chat_model("openai:gpt-5-nano")
+print(model.invoke("Reply with: gateway chat works").content)
+```
+
+A reply confirms an authenticated model call. `env_utils.py` checks configuration presence, not whether a key is valid or a model is authorized. If the request fails with an authentication or access error, verify the gateway region, workspace API key, provider secret, and model permissions. Use `uv sync` or `pip install -r requirements.txt` to install the gateway-compatible integration versions declared by this repository.
 
 Make a virtual environment and install dependencies. [More info](#python-virtual-environments)
 
