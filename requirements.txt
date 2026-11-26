@@ -11,6 +11,7 @@ langchain-community>=0.4.1
 pypdf>=6.13.3
 langchain-text-splitters>=1.0.0
 mcp>=1.21.1
+mcp_server_time<=2026.7.10
 langchain-mcp-adapters>=0.1.13
 langgraph>=1.0.3
 langgraph-cli>=0.4.9
