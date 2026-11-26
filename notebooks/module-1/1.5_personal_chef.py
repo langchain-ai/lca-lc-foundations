@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+from langchain.messages import HumanMessage
 
 load_dotenv()
 
@@ -32,3 +33,11 @@ agent = create_agent(
     tools=[web_search],
     system_prompt=system_prompt
 )
+
+config = {"configurable": {"thread_id": "1"}}
+
+response = agent.invoke(
+    {"messages": [HumanMessage(content="I have some leftover chicken and rice. What can I make?")]},
+    config
+)
+print(response['messages'][-1].content)
